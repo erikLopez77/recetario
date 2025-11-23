@@ -12,53 +12,30 @@ class _InicioState extends State<Inicio> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColoresApp.primario,
       body: Column(
         children: [
           // CONTENEDOR CON RECORTE DE OLA
-          Expanded(
-            child: Row(
-              children: [
-                ClipPath(
-                  clipper: WaveClipper(), // Nuestro clipper personalizado
-                  //va a recortar al hijo
-                  child: Container(
-                    color: ColoresApp.primario,
-                    height: 250, // Altura de la imagen con ola
-                    width: double.infinity,
-                    child: Image.asset(
-                      "assets/fondoR.jpg",
-                      fit: BoxFit.scaleDown,
-                      width: 210,
-                      height: 460,
-                    ),
-                    //decoration: BoxDecoration(
-                    /*image: DecorationImage(
-                        image: NetworkImage(
-                          'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-                        ),
-                        fit: BoxFit.cover,
-                      ),*/
-                    /* gradient: LinearGradient(
-                        //efecto de color
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.blue, Colors.purple],
-                      ),*/
-                    //),
-                  ),
-                ),
-              ],
+          ClipPath(
+            clipper: WaveClipper(), // Nuestro clipper personalizado
+            //va a recortar al hijo
+            child: SizedBox(
+              height: 250, // Altura de la imagen con ola
+              width: double.infinity,
+              child: Image.asset(
+                "assets/fondoR.jpg",
+                fit: BoxFit.fill,
+                width: 210,
+                height: 460,
+              ),
             ),
           ),
           // CONTENIDO DEBAJO DE LA OLA
-          Expanded(
-            child: Container(
-              color: ColoresApp.primario,
-              child: Center(
-                child: Text(
-                  'Contenido de la app aquí',
-                  style: TextStyle(fontSize: 20),
-                ),
+          Container(
+            child: Center(
+              child: Text(
+                'Contenido de la app aquí',
+                style: TextStyle(fontSize: 20),
               ),
             ),
           ),
@@ -68,7 +45,7 @@ class _InicioState extends State<Inicio> {
   }
 }
 
-// CLIPPER PERSONALIZADO PARA FORMA DE OLA
+//extiende de clase abstracta CustomClipper que define el area de recorte de un widget hijo
 class WaveClipper extends CustomClipper<Path> {
   //esquina superior izqda. 0,0, esquina superior derecha 1,0
   //esquina inferior izqda. 1,0, esquina inferior derecha 1,1
