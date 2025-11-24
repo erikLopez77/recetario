@@ -2,18 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:recetario/core/colores_app.dart';
 import 'package:recetario/core/estilos_text_field.dart';
 import 'package:recetario/core/estilos_texto.dart';
-
-//instancias para los estilos
-EstilosTextField estilosEmail = EstilosTextField(
-  hintText: "ejemplo@correo.com",
-  labelText: "E-mail",
-  prefixIcon: Icon(Icons.email),
-);
-EstilosTextField estilosContrasena = EstilosTextField(
-  hintText: "Tu contraseña",
-  labelText: "Contraseña",
-  prefixIcon: Icon(Icons.password),
-);
+import 'package:recetario/clasesHive/hive_service.dart';
+import 'package:recetario/pantallas/inicio.dart';
 
 class Loggin extends StatefulWidget {
   const Loggin({super.key});
@@ -23,28 +13,149 @@ class Loggin extends StatefulWidget {
 }
 
 class _LogginState extends State<Loggin> {
+  //clave para identificar el formulario
+  final formkey = GlobalKey<FormState>();
+
+  // Controladores para los campos de texto
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  //instancias para los estilos
+  final estilosEmail = EstilosTextField(
+    hintText: "ejemplo@correo.com",
+    labelText: "E-mail",
+    prefixIcon: Icon(Icons.email),
+  );
+
+  final estilosContrasena = EstilosTextField(
+    hintText: "Tu contraseña",
+    labelText: "Contraseña",
+    prefixIcon: Icon(Icons.password),
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColoresApp.primario,
-      body: bodyResultado(),
+      body: Padding(
+        padding: EdgeInsets.all(35),
+        child: Form(
+          key: formkey,
+          child: Column(
+            children: [
+              Spacer(),
+              Text("Inicio de sesión", style: EstiloTitulo.textoBody),
+              SizedBox(height: 18),
+              TextFormField(
+                controller: emailController,
+                decoration: estilosEmail.estilos,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingresa tu email';
+                  }
+                  if (!value.contains('@')) {
+                    return 'Ingresa un email válido';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 18),
+              TextFormField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: estilosContrasena.estilos,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingresa tu contraseña';
+                  }
+                  if (value.length < 4) {
+                    return 'La contraseña debe tener al menos 4 caracteres';
+                  }
+                  return null;
+                },
+              ),
+              Spacer(),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      // Pasamos la referencia sin ejecutar
+                      onPressed: () => _enviarFormulario(),
+                      child: Text("Iniciar sesión"),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
-}
 
-Padding bodyResultado() {
-  return Padding(
-    padding: EdgeInsets.all(35),
-    child: Column(
-      spacing: 18,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Spacer(),
-        Text("Inicio de sesión", style: EstiloTitulo.textoBody),
-        TextField(decoration: estilosEmail.estilos),
-        TextField(obscureText: true, decoration: estilosContrasena.estilos),
-        Spacer(),
-      ],
-    ),
-  );
+  // Método correcto
+  void _enviarFormulario() async {
+    if (formkey.currentState!.validate()) {
+      // Mostrar loading
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Center(child: CircularProgressIndicator()),
+      );
+
+      try {
+        final credencialesValidas = await HiveService.verificarCredenciales(
+          emailController.text,
+          passwordController.text,
+        );
+
+        //  Primero revisamos si el widget sigue montado(vivo5)
+        if (!mounted) return;
+
+        Navigator.pop(context);
+
+        if (credencialesValidas) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Inicio de sesión exitoso')));
+
+          final usuario = HiveService.obtenerUsuarioPorEmail(
+            emailController.text,
+          );
+
+          if (usuario != null) {
+            await HiveService.iniciarSesion(usuario);
+
+            //  Otro await → volvemos a verificar mounted
+            if (!mounted) return;
+
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Inicio()),
+            );
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Email o contraseña incorrectos')),
+          );
+        }
+      } catch (e) {
+        if (!mounted) return;
+
+        Navigator.pop(context);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al verificar credenciales: $e')),
+        );
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    // Limpiar los controladores cuando el widget se destruya
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 }
