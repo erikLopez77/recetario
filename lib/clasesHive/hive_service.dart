@@ -17,7 +17,6 @@ class HiveService {
     await Hive.openBox<Usuario>('usuarios');
     await Hive.openBox<Receta>('recetas');
     await Hive.openBox('configuracion');
-    print("Hemos iniciado los boxes");
   }
 
   //usuarios

@@ -12,12 +12,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await HiveService.init(); // Solo esta línea
   await MainApp.iniciarSemilla();
-  //MainApp().debugHive();
   runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
-  MainApp({super.key});
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -132,10 +131,9 @@ class MainApp extends StatelessWidget {
         await recipeBox.put(receta.id, receta);
       }
     }
-    print("Hemos insertado las semillas de datos");
   }
 
-  void debugHive() {
+  /*void debugHive() {
     print("===== DEBUG HIVE =====");
 
     try {
@@ -152,5 +150,5 @@ class MainApp extends StatelessWidget {
     } catch (e) {
       print("Error al leer Hive: $e");
     }
-  }
+  }*/
 }

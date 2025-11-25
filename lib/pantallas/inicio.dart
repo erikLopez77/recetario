@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:recetario/clasesHive/receta.dart';
 import 'package:recetario/core/colores_app.dart';
+import 'package:recetario/core/estilos_texto.dart';
+import 'package:recetario/clasesHive/hive_service.dart';
 
 class Inicio extends StatefulWidget {
   const Inicio({super.key});
@@ -9,37 +12,65 @@ class Inicio extends StatefulWidget {
 }
 
 class _InicioState extends State<Inicio> {
+  List<Receta> recetasUsuario = [];
+
+  @override
+  void initState() {
+    super.initState();
+    cargarRecetas();
+  }
+
+  void cargarRecetas() {
+    List<Receta> recetas = HiveService.obtenerRecetasUsuario();
+
+    setState(() {
+      recetasUsuario = recetas;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColoresApp.primario,
       body: Column(
         children: [
-          // CONTENEDOR CON RECORTE DE OLA
           ClipPath(
-            clipper: WaveClipper(), // Nuestro clipper personalizado
-            //va a recortar al hijo
+            clipper: WaveClipper(),
             child: SizedBox(
-              height: 250, // Altura de la imagen con ola
+              height: 250,
               width: double.infinity,
-              child: Image.asset(
-                "assets/fondoR.jpg",
-                fit: BoxFit.fill,
-                width: 210,
-                height: 460,
-              ),
+              child: Image.asset("assets/fondoR.jpg", fit: BoxFit.fill),
             ),
           ),
-          // CONTENIDO DEBAJO DE LA OLA
-          Container(
-            child: Center(
-              child: Text(
-                'Contenido de la app aquí',
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
+
+          SizedBox(height: 10),
+
+          Text("Mis recetas", style: EstiloTitulo.textoBody),
+
+          SizedBox(height: 10),
+
+          Expanded(
+            child: recetasUsuario.isEmpty
+                ? Center(child: Text("No tienes recetas"))
+                : ListView.builder(
+                    itemCount: recetasUsuario.length,
+                    itemBuilder: (context, index) {
+                      final receta = recetasUsuario[index];
+                      return ListTile(
+                        title: Text(receta.titulo),
+                        subtitle: Text(receta.descripcion),
+                      );
+                    },
+                  ),
           ),
         ],
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        foregroundColor: ColoresApp.primario,
+        backgroundColor: ColoresApp.secundario,
+        child: Icon(Icons.add),
       ),
     );
   }

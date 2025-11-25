@@ -95,8 +95,11 @@ class _LogginState extends State<Loggin> {
 
   // Método correcto
   void _enviarFormulario() async {
+    print("VALIDANDO FORM...");
+
     if (formkey.currentState!.validate()) {
-      // Mostrar loading
+      print("FORM OK, MOSTRANDO LOADING");
+
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -104,49 +107,50 @@ class _LogginState extends State<Loggin> {
       );
 
       try {
+        print("VERIFICANDO CREDENCIALES...");
+
         final credencialesValidas = await HiveService.verificarCredenciales(
           emailController.text,
           passwordController.text,
         );
 
-        //  Primero revisamos si el widget sigue montado(vivo5)
+        print("RESULTADO CREDENCIALES: $credencialesValidas");
+
         if (!mounted) return;
 
         Navigator.pop(context);
 
         if (credencialesValidas) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Inicio de sesión exitoso')));
+          print("CREDENCIALES CORRECTAS");
 
           final usuario = HiveService.obtenerUsuarioPorEmail(
             emailController.text,
           );
 
+          print("USUARIO OBTENIDO: $usuario");
+
           if (usuario != null) {
+            print("INICIANDO SESIÓN...");
             await HiveService.iniciarSesion(usuario);
 
-            //  Otro await → volvemos a verificar mounted
             if (!mounted) return;
 
+            print("NAVEGANDO A INICIO...");
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => Inicio()),
             );
+          } else {
+            print("ERROR: USUARIO NULL");
           }
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Email o contraseña incorrectos')),
-          );
+          print("CREDENCIALES INCORRECTAS");
         }
       } catch (e) {
         if (!mounted) return;
 
         Navigator.pop(context);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al verificar credenciales: $e')),
-        );
+        print("ERROR EN LOGIN: $e");
       }
     }
   }
