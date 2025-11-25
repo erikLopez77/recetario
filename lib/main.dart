@@ -3,7 +3,6 @@ import 'package:hive/hive.dart';
 import 'package:recetario/clasesHive/receta.dart';
 import 'package:recetario/clasesHive/usuario.dart';
 import 'package:recetario/core/colores_app.dart';
-import 'package:recetario/pantallas/inicio.dart';
 import 'package:recetario/pantallas/splash.dart';
 import 'package:recetario/clasesHive/hive_service.dart';
 import 'package:uuid/uuid.dart';

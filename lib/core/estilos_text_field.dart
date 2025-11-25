@@ -3,14 +3,20 @@ import 'package:flutter/material.dart';
 class EstilosTextField {
   String? hintText, labelText;
   final Widget? prefixIcon;
+  int? maxLines;
   //{} opcionales por defecto, no importa el orden para instanciar
-  EstilosTextField({this.hintText, this.labelText, this.prefixIcon});
+  EstilosTextField({
+    this.hintText,
+    this.labelText,
+    this.prefixIcon,
+    this.maxLines,
+  });
 
   InputDecoration get estilos {
     return InputDecoration(
       labelText: labelText,
       hintText: hintText,
-
+      hintMaxLines: maxLines,
       //COLORES Y ESTILOS DE TEXTO
       labelStyle: TextStyle(color: Colors.black, fontSize: 16),
       hintStyle: TextStyle(color: Colors.grey[500], fontSize: 14),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recetario/core/colores_app.dart';
 import 'package:recetario/core/estilos_text_field.dart';
-import 'package:recetario/core/estilos_texto.dart';
 import 'package:recetario/clasesHive/hive_service.dart';
 import 'package:recetario/pantallas/inicio.dart';
 
@@ -44,8 +43,12 @@ class _LogginState extends State<Loggin> {
           child: Column(
             children: [
               Spacer(),
-              Text("Inicio de sesión", style: EstiloTitulo.textoBody),
-              SizedBox(height: 18),
+              SizedBox(
+                height: 210,
+                width: 210,
+                child: Image.asset("assets/logo1.png", fit: BoxFit.fill),
+              ),
+              SizedBox(height: 15),
               TextFormField(
                 controller: emailController,
                 decoration: estilosEmail.estilos,
@@ -59,7 +62,7 @@ class _LogginState extends State<Loggin> {
                   return null;
                 },
               ),
-              SizedBox(height: 18),
+              SizedBox(height: 20),
               TextFormField(
                 controller: passwordController,
                 obscureText: true,
@@ -74,6 +77,14 @@ class _LogginState extends State<Loggin> {
                   return null;
                 },
               ),
+              SizedBox(height: 15),
+              Row(
+                children: [
+                  Text("¿Ya tienes una cuenta?"),
+                  Spacer(),
+                  Text("¿Olvidaste tu contraseña?"),
+                ],
+              ),
               Spacer(),
               Row(
                 children: [
@@ -81,7 +92,14 @@ class _LogginState extends State<Loggin> {
                     child: ElevatedButton(
                       // Pasamos la referencia sin ejecutar
                       onPressed: () => _enviarFormulario(),
-                      child: Text("Iniciar sesión"),
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(Colors.black),
+                        foregroundColor: WidgetStatePropertyAll(Colors.white),
+                      ),
+                      child: Text(
+                        "Iniciar sesión",
+                        style: TextStyle(fontSize: 17),
+                      ),
                     ),
                   ),
                 ],
