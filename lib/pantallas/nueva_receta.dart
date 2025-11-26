@@ -30,7 +30,7 @@ class _NuevaRecetaState extends State<NuevaReceta> {
     labelText: "Titulo",
   );
   final estilosDescripcion = EstilosTextField(
-    hintText: "Describe el platillo o haz un comentario acerca de el",
+    hintText: "Describe el platillo o haz un comentario",
     labelText: "Descripción",
   );
   final estilosIngredientes = EstilosTextField(
@@ -48,86 +48,102 @@ class _NuevaRecetaState extends State<NuevaReceta> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: ColoresApp.primario,
-      body: Form(
-        key: formK,
-        child: Column(
-          children: [
-            ClipPath(
-              clipper: WaveClipper(),
-              child: SizedBox(
-                height: 250,
-                width: double.infinity,
-                child: Image.asset("assets/fondoR.jpg", fit: BoxFit.fill),
+      appBar: AppBar(
+        backgroundColor: ColoresApp.secundario,
+        iconTheme: const IconThemeData(color: ColoresApp.primario),
+      ),
+      body: SingleChildScrollView(
+        child: Form(
+          key: formK,
+          child: Column(
+            children: [
+              ClipPath(
+                clipper: WaveClipper(),
+                child: SizedBox(
+                  height: 250,
+                  width: double.infinity,
+                  child: Image.asset("assets/fondoR.jpg", fit: BoxFit.fill),
+                ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsetsGeometry.symmetric(
-                horizontal: 20,
-                vertical: 20,
-              ),
-              child: Column(
-                children: [
-                  Text("Nueva receta", style: EstiloTitulo.textoBody),
-                  TextFormField(
-                    controller: titleController,
-                    decoration: estilosTitulo.estilos,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa un titulo';
-                      }
-                      return null;
-                    },
-                  ),
-                  //SizedBox(height: 18),
-                  TextFormField(
-                    controller: descriptionController,
-                    decoration: estilosDescripcion.estilos,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa una descripcion';
-                      }
-                      return null;
-                    },
-                  ),
-                  //SizedBox(height: 18),
-                  TextFormField(
-                    controller: ingredientsController,
-                    decoration: estilosIngredientes.estilos,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa los ingredientes';
-                      }
-                      return null;
-                    },
-                  ),
-                  //SizedBox(height: 18),
-                  TextFormField(
-                    controller: stepsController,
-                    decoration: estilosPasos.estilos,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa los ingredientes';
-                      }
-                      return null;
-                    },
-                  ),
-                  //SizedBox(height: 18),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          // Pasamos la referencia sin ejecutar
-                          onPressed: () => _crearReceta(),
-                          child: Text("Iniciar sesión"),
+              Padding(
+                padding: EdgeInsetsGeometry.symmetric(
+                  horizontal: 20,
+                  vertical: 20,
+                ),
+                child: Column(
+                  spacing: 25,
+                  children: [
+                    Text("Nueva receta", style: EstiloTitulo.textoBody),
+                    TextFormField(
+                      controller: titleController,
+                      decoration: estilosTitulo.estilos,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor ingresa un titulo';
+                        }
+                        return null;
+                      },
+                    ),
+                    //SizedBox(height: 18),
+                    TextFormField(
+                      controller: descriptionController,
+                      decoration: estilosDescripcion.estilos,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor ingresa una descripcion';
+                        }
+                        return null;
+                      },
+                    ),
+                    //SizedBox(height: 18),
+                    TextFormField(
+                      controller: ingredientsController,
+                      decoration: estilosIngredientes.estilos,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor ingresa los ingredientes';
+                        }
+                        return null;
+                      },
+                    ),
+                    //SizedBox(height: 18),
+                    TextFormField(
+                      controller: stepsController,
+                      decoration: estilosPasos.estilos,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor ingresa los ingredientes';
+                        }
+                        return null;
+                      },
+                    ),
+                    //SizedBox(height: 18),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            // Pasamos la referencia sin ejecutar
+                            onPressed: () => _crearReceta(),
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                Colors.black,
+                              ),
+                              foregroundColor: WidgetStatePropertyAll(
+                                Colors.white,
+                              ),
+                            ),
+                            child: Text("Guardar receta"),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -151,6 +167,7 @@ class _NuevaRecetaState extends State<NuevaReceta> {
           //guardar datos
           await HiveService.guardarReceta(receta);
         }
+        if (!mounted) return;
 
         Navigator.pop(context);
       } catch (e) {

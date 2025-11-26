@@ -4,14 +4,14 @@ import 'package:recetario/core/estilos_text_field.dart';
 import 'package:recetario/clasesHive/hive_service.dart';
 import 'package:recetario/pantallas/inicio.dart';
 
-class Loggin extends StatefulWidget {
-  const Loggin({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  State<Loggin> createState() => _LogginState();
+  State<Login> createState() => _LoginState();
 }
 
-class _LogginState extends State<Loggin> {
+class _LoginState extends State<Login> {
   //clave para identificar el formulario
   final formkey = GlobalKey<FormState>();
 

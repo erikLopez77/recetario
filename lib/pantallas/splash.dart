@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:recetario/pantallas/loggin.dart';
+import 'package:recetario/pantallas/login.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -19,7 +19,7 @@ class _SplashState extends State<Splash> {
       Duration(seconds: 3),
       () => Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Loggin()),
+        MaterialPageRoute(builder: (context) => Login()),
       ),
     );
   }
