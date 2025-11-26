@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recetario/clasesHive/receta.dart';
+import 'package:recetario/components/show_snack_bar.dart';
 import 'package:recetario/core/colores_app.dart';
 import 'package:recetario/core/estilos_texto.dart';
 import 'package:recetario/clasesHive/hive_service.dart';
@@ -26,6 +27,9 @@ class _InicioState extends State<Inicio> {
   void cargarRecetas() {
     List<Receta> recetas = HiveService.obtenerRecetasUsuario();
 
+    // Ordenar de más nuevo a más viejo
+    recetas.sort((a, b) => b.fechaCreacion.compareTo(a.fechaCreacion));
+
     setState(() {
       recetasUsuario = recetas;
     });
@@ -43,6 +47,7 @@ class _InicioState extends State<Inicio> {
       MaterialPageRoute(builder: (context) => Login()),
       (Route<dynamic> route) => false,
     );
+    ShowSnack.mostrar(context, "Sesión finalizada");
   }
 
   Drawer menuLateral(BuildContext context) {
@@ -128,32 +133,93 @@ class _InicioState extends State<Inicio> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: ListTile(
-                          contentPadding: EdgeInsets.all(16),
-                          leading: CircleAvatar(
-                            radius: 30,
-                            backgroundColor: Colors.orange,
-                            child: Icon(
-                              Icons.restaurant_menu,
-                              color: Colors.white,
+                        child: Stack(
+                          children: [
+                            ListTile(
+                              contentPadding: EdgeInsets.all(16),
+                              leading: CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Colors.orange,
+                                child: Icon(
+                                  Icons.restaurant_menu,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              title: Text(
+                                receta.titulo,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              subtitle: Text(
+                                receta.descripcion,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              trailing: Icon(
+                                size: 36,
+                                Icons.edit_note_outlined,
+                              ),
+
+                              onTap: () {
+                                print("Ver receta: ${receta.id}");
+                              },
                             ),
-                          ),
-                          title: Text(
-                            receta.titulo,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                            Positioned(
+                              top: 6,
+                              right: 6,
+                              child: GestureDetector(
+                                onTap: () {
+                                  showDialog<String>(
+                                    context: context,
+                                    builder: (BuildContext context) => AlertDialog(
+                                      title: const Text('Eliminar receta'),
+                                      content: const Text(
+                                        '¿Estás seguro que deseas eliminar la receta?',
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'Cancel'),
+                                          child: const Text(
+                                            'Cancelar',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            await HiveService.eliminarReceta(
+                                              receta.id,
+                                            );
+                                            cargarRecetas();
+                                            Navigator.pop(context, 'OK');
+                                            ShowSnack.mostrar(
+                                              context,
+                                              "Se ha eliminado su receta",
+                                            );
+                                          },
+                                          child: const Text(
+                                            'Si, eliminar',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.cancel_rounded,
+                                  color: Colors.red,
+                                  size: 22,
+                                ),
+                              ),
                             ),
-                          ),
-                          subtitle: Text(
-                            receta.descripcion,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          trailing: Icon(Icons.arrow_forward_ios),
-                          onTap: () {
-                            print("Ver receta: ${receta.titulo}");
-                          },
+                          ],
                         ),
                       );
                     },
@@ -164,11 +230,16 @@ class _InicioState extends State<Inicio> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          Navigator.push(
+          // Esperamos a que la pantalla NuevaReceta termine y nos devuelva un resultado
+          final resultado = await Navigator.push<bool?>(
             context,
             MaterialPageRoute(builder: (context) => NuevaReceta()),
           );
-          cargarRecetas();
+          // Si la pantalla devolvió true (receta creada), recargamos la lista
+          if (resultado == true) {
+            cargarRecetas();
+            ShowSnack.mostrar(context, "Receta creada");
+          }
         },
         foregroundColor: ColoresApp.primario,
         backgroundColor: ColoresApp.secundario,

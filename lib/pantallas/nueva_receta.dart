@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recetario/clasesHive/receta.dart';
 import 'package:recetario/clasesHive/usuario.dart';
+import 'package:recetario/components/show_snack_bar.dart';
 import 'package:recetario/core/colores_app.dart';
 import 'package:recetario/core/estilos_texto.dart';
 import 'package:recetario/core/estilos_text_field.dart';
@@ -168,8 +169,8 @@ class _NuevaRecetaState extends State<NuevaReceta> {
           await HiveService.guardarReceta(receta);
         }
         if (!mounted) return;
-
-        Navigator.pop(context);
+        //ShowSnack(context: context, mensaje: "Receta creada");
+        Navigator.pop(context, true);
       } catch (e) {
         if (!mounted) return;
 
