@@ -6,6 +6,7 @@ import 'package:recetario/clasesHive/hive_service.dart';
 import 'package:recetario/pantallas/nueva_receta.dart';
 import 'package:recetario/pantallas/wave_clipper.dart';
 import 'package:recetario/pantallas/login.dart';
+import 'package:recetario/pantallas/perfil.dart';
 
 class Inicio extends StatefulWidget {
   const Inicio({super.key});
@@ -64,7 +65,12 @@ class _InicioState extends State<Inicio> {
             title: const Text('Mi perfil'),
             onTap: () {
               // Acción al presionar y cerrar el menú
+              print("NAVEGANDO A PERFIL...");
               Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MiPerfil()),
+              );
             },
           ),
           ListTile(
