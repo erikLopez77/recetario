@@ -40,9 +40,13 @@ class HiveService {
     String email,
     String contrasena,
   ) async {
+    print(email+"email de paraametro");
+    print(contrasena+"contrasena de paraametro");
     final userBox = Hive.box<Usuario>('usuarios');
 
-    for (final usuario in userBox.values) {
+    for (final usuario in userBox.values) { 
+      print(usuario.email+"email ");
+    print(usuario.password+"contrasena ");
       if (usuario.email == email && usuario.password == contrasena) {
         return true;
       }

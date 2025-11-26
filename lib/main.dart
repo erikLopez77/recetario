@@ -11,6 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await HiveService.init(); // Solo esta línea
   await MainApp.iniciarSemilla();
+  MainApp().debugHive();
   runApp(MainApp());
 }
 
@@ -36,13 +37,13 @@ class MainApp extends StatelessWidget {
           id: '1',
           nombre: 'Erik Lopez',
           email: "correo@gmail.com",
-          password: "1234",
+          password: "1234montse",
         ),
         Usuario(
           id: '2',
           nombre: 'Montse Cirne',
           email: "montse123@correo.com",
-          password: "contraseña",
+          password: "contrasena",
         ),
       ];
 
@@ -132,7 +133,7 @@ class MainApp extends StatelessWidget {
     }
   }
 
-  /*void debugHive() {
+  void debugHive() {
     print("===== DEBUG HIVE =====");
 
     try {
@@ -149,5 +150,5 @@ class MainApp extends StatelessWidget {
     } catch (e) {
       print("Error al leer Hive: $e");
     }
-  }*/
+  }
 }
