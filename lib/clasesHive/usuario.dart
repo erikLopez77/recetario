@@ -9,13 +9,13 @@ class Usuario {
   final String id;
 
   @HiveField(1)
-  final String nombre;
+  String nombre;
 
   @HiveField(2)
   final String email;
 
   @HiveField(3)
-  final String password;
+  String password;
 
   Usuario({
     required this.id,

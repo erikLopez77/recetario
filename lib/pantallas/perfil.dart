@@ -12,7 +12,12 @@ class MiPerfil extends StatefulWidget {
 class _MiPerfilState extends State<MiPerfil> {
   Usuario? usuario;
 
-    @override
+  bool mostrarCambioPass = false;
+
+  final TextEditingController nuevaPassCtrl = TextEditingController();
+  final TextEditingController confirmarPassCtrl = TextEditingController();
+
+  @override
   void initState() {
     super.initState();
     cargarUsuario();
@@ -21,6 +26,44 @@ class _MiPerfilState extends State<MiPerfil> {
   void cargarUsuario() {
     usuario = HiveService.obtenerUsuarioActual();
     setState(() {});
+  }
+
+  Future<void> guardarNuevaContrasena() async {
+    final nueva = nuevaPassCtrl.text.trim();
+    final confirmar = confirmarPassCtrl.text.trim();
+
+    if (nueva.isEmpty || confirmar.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Todos los campos son obligatorios")),
+      );
+      return;
+    }
+
+    if (nueva != confirmar) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Las contraseñas no coinciden")),
+      );
+      return;
+    }
+
+    // ACTUALIZA CONTRASEÑA EN HIVE
+    final ok = await HiveService.actualizarContrasena(usuario!.id, nueva);
+
+    if (ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Contraseña actualizada correctamente")),
+      );
+
+      setState(() {
+        mostrarCambioPass = false;
+        nuevaPassCtrl.clear();
+        confirmarPassCtrl.clear();
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error al actualizar la contraseña")),
+      );
+    }
   }
 
   @override
@@ -57,11 +100,51 @@ class _MiPerfilState extends State<MiPerfil> {
             Text("Email:", style: TextStyle(fontWeight: FontWeight.bold)),
             Text(usuario!.email),
 
-            SizedBox(height: 20),
+            SizedBox(height: 30),
 
-            Text("ID Usuario:", style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(usuario!.id.toString()),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    mostrarCambioPass = !mostrarCambioPass;
+                  });
+                },
+                child: Text(mostrarCambioPass
+                    ? "Cancelar"
+                    : "Cambiar contraseña"),
+              ),
+            ),
 
+            const SizedBox(height: 20),
+
+            if (mostrarCambioPass) ...[
+              TextField(
+                controller: nuevaPassCtrl,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: "Nueva contraseña",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+
+              SizedBox(height: 15),
+
+              TextField(
+                controller: confirmarPassCtrl,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: "Confirmar contraseña",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+
+              SizedBox(height: 20),
+
+              ElevatedButton(
+                onPressed: guardarNuevaContrasena,
+                child: Text("Guardar contraseña"),
+              ),
+            ],
           ],
         ),
       ),

@@ -102,4 +102,21 @@ class HiveService {
       }
     }
   }
+
+  //Cambiar contraseñaa
+  static Future<bool> actualizarContrasena(String userId, String nuevaContrasena) async {
+    try {
+      final userBox = Hive.box<Usuario>('usuarios');
+      Usuario? usuario = userBox.get(userId);
+      if (usuario == null) return false;
+
+      usuario.password = nuevaContrasena; 
+      await userBox.put(userId, usuario); 
+
+      return true;
+    } catch (e) {
+      print("Error actualizando contraseña: $e");
+      return false;
+    }
+  }
 }
