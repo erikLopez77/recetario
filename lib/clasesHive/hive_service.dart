@@ -92,4 +92,14 @@ class HiveService {
         .where((receta) => receta.idUsuario == usuarioActual.id)
         .toList();
   }
+
+  static Future<void> eliminarReceta(String id) async {
+    final recipeBox = Hive.box<Receta>('recetas');
+
+    for (final receta in recipeBox.values) {
+      if (receta.id == id) {
+        recipeBox.delete(receta.id);
+      }
+    }
+  }
 }
