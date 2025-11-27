@@ -119,4 +119,16 @@ class HiveService {
       return false;
     }
   }
+
+  static Future<bool> actualizarNombre(String id, String nuevoNombre) async {
+    final box = await Hive.openBox<Usuario>('usuarios');
+    final usuario = box.get(id);
+
+    if (usuario == null) return false;
+
+    usuario.nombre = nuevoNombre;
+    await box.put(id, usuario);
+    return true;
+  }
+
 }
