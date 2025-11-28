@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:recetario/clasesHive/receta.dart';
 import 'package:recetario/clasesHive/usuario.dart';
 import 'package:recetario/core/colores_app.dart';
@@ -11,6 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await HiveService.init(); // Solo esta línea
   await MainApp.iniciarSemilla();
+  //MainApp.resetearYReinicializar();
   MainApp().debugHive();
   runApp(MainApp());
 }
@@ -131,6 +135,69 @@ class MainApp extends StatelessWidget {
         await recipeBox.put(receta.id, receta);
       }
     }
+  }
+
+  static Future<void> borrarTodosLosDatos() async {
+    try {
+      // 1. Cerrar todas las cajas abiertas
+      await Hive.close();
+
+      // 2. Borrar las cajas específicas
+      await _borrarCaja('usuarios');
+      await _borrarCaja('recetas');
+
+      // 3. Opcional: Borrar todo el directorio de Hive (más agresivo)
+      await _borrarDirectorioHive();
+
+      print(" Todos los datos han sido borrados exitosamente");
+    } catch (e) {
+      print(" Error al borrar datos: $e");
+    }
+  }
+
+  // Función para borrar una caja específica
+  static Future<void> _borrarCaja(String nombreCaja) async {
+    try {
+      if (Hive.isBoxOpen(nombreCaja)) {
+        final box = await Hive.openBox(nombreCaja);
+        await box.clear();
+        await box.close();
+      }
+      await Hive.deleteBoxFromDisk(nombreCaja);
+      print(" Caja '$nombreCaja' borrada");
+    } catch (e) {
+      print(" Error borrando caja $nombreCaja: $e");
+    }
+  }
+
+  // Función para borrar todo el directorio de Hive
+  static Future<void> _borrarDirectorioHive() async {
+    try {
+      final appDocumentDir = await getApplicationDocumentsDirectory();
+      final hiveDir = appDocumentDir.path;
+
+      final dir = Directory(hiveDir);
+      if (await dir.exists()) {
+        await dir.delete(recursive: true);
+        print(" Directorio Hive borrado: $hiveDir");
+      }
+    } catch (e) {
+      print(" No se pudo borrar directorio Hive: $e");
+    }
+  }
+
+  // Función para resetear y volver a inicializar con semilla
+  static Future<void> resetearYReinicializar() async {
+    // 1. Borrar todos los datos
+    await borrarTodosLosDatos();
+
+    // 2. Volver a inicializar Hive
+    await HiveService.init();
+
+    // 3. Volver a insertar la semilla
+    await MainApp.iniciarSemilla();
+
+    print("Reset completo exitoso. Datos de semilla reinstalados.");
   }
 
   void debugHive() {
