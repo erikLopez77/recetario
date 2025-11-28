@@ -5,19 +5,19 @@ part 'receta.g.dart';
 @HiveType(typeId: 1)
 class Receta {
   @HiveField(0)
-  final String id;
+  String id;
 
   @HiveField(1)
-  final String titulo;
+  String titulo;
 
   @HiveField(2)
-  final String descripcion;
+  String descripcion;
 
   @HiveField(3)
-  final String ingredientes;
+  String ingredientes;
 
   @HiveField(4)
-  final String pasos;
+  String pasos;
 
   @HiveField(5)
   final DateTime fechaCreacion;
@@ -34,6 +34,26 @@ class Receta {
     required this.idUsuario,
   });
 
+Receta copyWith({
+    String? id,
+    String? titulo,
+    String? descripcion,
+    String? ingredientes,
+    String? pasos,
+    DateTime? fechaCreacion,
+    String? idUsuario,
+  }) {
+    return Receta(
+      id: id ?? this.id,
+      titulo: titulo ?? this.titulo,
+      descripcion: descripcion ?? this.descripcion,
+      ingredientes: ingredientes ?? this.ingredientes,
+      pasos: pasos ?? this.pasos,
+      fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+      idUsuario: idUsuario ?? this.idUsuario,
+    );
+  }
+  
   @override
   String toString() {
     return 'Receta(id: $id, titulo: $titulo, usuario: $idUsuario)';

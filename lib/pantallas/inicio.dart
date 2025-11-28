@@ -8,6 +8,7 @@ import 'package:recetario/pantallas/nueva_receta.dart';
 import 'package:recetario/pantallas/wave_clipper.dart';
 import 'package:recetario/pantallas/login.dart';
 import 'package:recetario/pantallas/perfil.dart';
+import 'package:recetario/pantallas/editarReceta.dart';
 
 class Inicio extends StatefulWidget {
   const Inicio({super.key});
@@ -168,8 +169,18 @@ class _InicioState extends State<Inicio> {
                                 Icons.edit_note_outlined,
                               ),
 
-                              onTap: () {
-                                print("Ver receta: ${receta.id}");
+                              onTap: () async {
+                                final resultado = await Navigator.push<bool?>(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditarReceta(receta: receta),
+                                  ),
+                                );
+
+                                if (resultado == true) {
+                                  cargarRecetas();
+                                  ShowSnack.mostrar(context, "Receta actualizada");
+                                }
                               },
                             ),
                             Positioned(

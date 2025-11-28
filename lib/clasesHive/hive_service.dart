@@ -131,4 +131,19 @@ class HiveService {
     return true;
   }
 
+  static Future<bool> actualizarReceta(Receta recetaActualizada) async {
+    try {
+      final box = Hive.box<Receta>('recetas');
+
+      if (!box.containsKey(recetaActualizada.id)) {
+        return false;
+      }
+
+      await box.put(recetaActualizada.id, recetaActualizada);
+      return true;
+    } catch (e) {
+      print("ERROR actualizando receta: $e");
+      return false;
+    }
+  }
 }
