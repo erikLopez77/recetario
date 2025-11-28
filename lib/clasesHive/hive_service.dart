@@ -40,9 +40,13 @@ class HiveService {
     String email,
     String contrasena,
   ) async {
+    print(email+"email de paraametro");
+    print(contrasena+"contrasena de paraametro");
     final userBox = Hive.box<Usuario>('usuarios');
 
-    for (final usuario in userBox.values) {
+    for (final usuario in userBox.values) { 
+      print(usuario.email+"email ");
+    print(usuario.password+"contrasena ");
       if (usuario.email == email && usuario.password == contrasena) {
         return true;
       }
@@ -96,6 +100,50 @@ class HiveService {
       if (receta.id == id) {
         recipeBox.delete(receta.id);
       }
+    }
+  }
+
+  //Cambiar contraseñaa
+  static Future<bool> actualizarContrasena(String userId, String nuevaContrasena) async {
+    try {
+      final userBox = Hive.box<Usuario>('usuarios');
+      Usuario? usuario = userBox.get(userId);
+      if (usuario == null) return false;
+
+      usuario.password = nuevaContrasena; 
+      await userBox.put(userId, usuario); 
+
+      return true;
+    } catch (e) {
+      print("Error actualizando contraseña: $e");
+      return false;
+    }
+  }
+
+  static Future<bool> actualizarNombre(String id, String nuevoNombre) async {
+    final box = await Hive.openBox<Usuario>('usuarios');
+    final usuario = box.get(id);
+
+    if (usuario == null) return false;
+
+    usuario.nombre = nuevoNombre;
+    await box.put(id, usuario);
+    return true;
+  }
+
+  static Future<bool> actualizarReceta(Receta recetaActualizada) async {
+    try {
+      final box = Hive.box<Receta>('recetas');
+
+      if (!box.containsKey(recetaActualizada.id)) {
+        return false;
+      }
+
+      await box.put(recetaActualizada.id, recetaActualizada);
+      return true;
+    } catch (e) {
+      print("ERROR actualizando receta: $e");
+      return false;
     }
   }
 }

@@ -71,7 +71,7 @@ class _LoginState extends State<Login> {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingresa tu contraseña';
                   }
-                  if (value.length < 4) {
+                  if (value.length <4 ) {
                     return 'La contraseña debe tener al menos 4 caracteres';
                   }
                   return null;
