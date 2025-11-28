@@ -34,6 +34,7 @@ class Receta {
     required this.idUsuario,
   });
 
+//Objeto nuevo
 Receta copyWith({
     String? id,
     String? titulo,
@@ -43,6 +44,7 @@ Receta copyWith({
     DateTime? fechaCreacion,
     String? idUsuario,
   }) {
+    //valida que campos se actualizan
     return Receta(
       id: id ?? this.id,
       titulo: titulo ?? this.titulo,
@@ -53,7 +55,7 @@ Receta copyWith({
       idUsuario: idUsuario ?? this.idUsuario,
     );
   }
-  
+
   @override
   String toString() {
     return 'Receta(id: $id, titulo: $titulo, usuario: $idUsuario)';
